@@ -1,0 +1,3 @@
+C:\Users\adrie\OneDrive\Documents\DiffEngine_src\DifferenceEngine\bin\Release\DifferenceEngine.dll
+C:\Users\adrie\OneDrive\Documents\DiffEngine_src\DifferenceEngine\obj\Release\DifferenceEngine.csprojResolveAssemblyReference.cache
+C:\Users\adrie\OneDrive\Documents\DiffEngine_src\DifferenceEngine\obj\Release\DifferenceEngine.dll

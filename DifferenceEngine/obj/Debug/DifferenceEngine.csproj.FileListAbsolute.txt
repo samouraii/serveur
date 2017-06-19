@@ -1,0 +1,10 @@
+C:\Users\adrie\OneDrive\Documents\DiffEngine_src\DifferenceEngine\bin\Debug\DifferenceEngine.dll
+C:\Users\adrie\OneDrive\Documents\DiffEngine_src\DifferenceEngine\bin\Debug\DifferenceEngine.pdb
+C:\Users\adrie\OneDrive\Documents\DiffEngine_src\DifferenceEngine\obj\Debug\DifferenceEngine.csprojResolveAssemblyReference.cache
+C:\Users\adrie\OneDrive\Documents\DiffEngine_src\DifferenceEngine\obj\Debug\DifferenceEngine.dll
+C:\Users\adrie\OneDrive\Documents\DiffEngine_src\DifferenceEngine\obj\Debug\DifferenceEngine.pdb
+G:\laucherQange\laucherQange\DifferenceEngine\bin\Debug\DifferenceEngine.dll
+G:\laucherQange\laucherQange\DifferenceEngine\bin\Debug\DifferenceEngine.pdb
+G:\laucherQange\laucherQange\DifferenceEngine\obj\Debug\DifferenceEngine.csprojResolveAssemblyReference.cache
+G:\laucherQange\laucherQange\DifferenceEngine\obj\Debug\DifferenceEngine.dll
+G:\laucherQange\laucherQange\DifferenceEngine\obj\Debug\DifferenceEngine.pdb
