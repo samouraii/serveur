@@ -6,6 +6,9 @@ using System.Windows;
 using Newtonsoft.Json;
 using System.IO.Compression;
 using System.ComponentModel;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading;
 
 namespace laucherQange
 {
@@ -113,12 +116,13 @@ namespace laucherQange
           
             button.IsEnabled = false;
             text = dbConnect.selectLastVersion(tType.Text);
-            if(text[0] != "" && text[0]!= null && text[0] != "-1")
+            chemin = dFile + "\\" + tType.Text + "\\" + tVesrion.Text;
+            if (text[0] != "" && text[0]!= null && text[0] != "-1")
             {
                 t2 = new BackgroundWorker();
                 t2.DoWork += new DoWorkEventHandler(threadVerification);
-                t2.RunWorkerCompleted += new RunWorkerCompletedEventHandler(finithreadVerification);
-                t2.RunWorkerCompleted += new RunWorkerCompletedEventHandler(FinTotal);
+                //t2.RunWorkerCompleted += new RunWorkerCompletedEventHandler(finithreadVerification);
+                //t2.RunWorkerCompleted += new RunWorkerCompletedEventHandler(FinTotal);
                 t2.WorkerReportsProgress = true;
                 t2.ProgressChanged += new ProgressChangedEventHandler(progressBar);
                 t2.RunWorkerAsync();
@@ -132,14 +136,13 @@ namespace laucherQange
                 //Changer pour copier directory
 
             }
-           
-            Directory.CreateDirectory(dFile + "\\" + tType.Text + "\\" + tVesrion.Text + "\\jeu\\zip");
+
+            /*Directory.CreateDirectory(dFile + "\\" + tType.Text + "\\" + tVesrion.Text + "\\jeu\\zip");
             t = new BackgroundWorker();
             t.DoWork += new DoWorkEventHandler(thread);
             t.RunWorkerCompleted += new RunWorkerCompletedEventHandler(finithread);
             t.RunWorkerCompleted += new RunWorkerCompletedEventHandler(FinTotal);
-            chemin = dFile + "\\" + tType.Text + "\\" + tVesrion.Text;
-            t.RunWorkerAsync();
+            t.RunWorkerAsync();*/
         }
 
         private void thread(object sender, DoWorkEventArgs e)
@@ -154,50 +157,85 @@ namespace laucherQange
                 Console.WriteLine(ex.Message);
             }
         }
+
         private void finithread(object sender, RunWorkerCompletedEventArgs e)
         {
-           
             MessageBox.Show("Zip ok");
-            
         }
-        private int nbThread = 6;
+
+        //Console.WriteLine(msg);
+        private int nbThread = 8;
+        private List<string> newVersion;
+        private List<string> AncienneVersion;
+        int time;
         private void threadVerification(object sender, DoWorkEventArgs e)
         {//ici la modification
-            List<string> AncienneVersion = this.nbfichier(dFile + text[0] + "\\jeu\\normal",  new List<string>());
-            List<string> newVersion = this.nbfichier(sFile, new List<string>());
-            List<BackgroundWorker> travailleur = new List<BackgroundWorker>();
-            if (newVersion.Count > 6)
+            bool parsed = true;
+            if (parsed)
             {
-                for(int i = 0; i >=6; i++)
+                fin = 0;
+                AncienneVersion = this.nbfichier(dFile + text[0] + "\\jeu\\normal",  new List<string>());
+                newVersion = this.nbfichier(sFile, new List<string>());
+                counter = 0;
+                time = DateTime.Now.Millisecond;
+                Directory.CreateDirectory(chemin + "\\patch\\");
+                List<BackgroundWorker> travailleur = new List<BackgroundWorker>();
+                for (int i = 0; i < nbThread; i++)
                 {
                     BackgroundWorker travail = new BackgroundWorker();
                     travail.DoWork += new DoWorkEventHandler(calculStart);
                     travail.RunWorkerCompleted += new RunWorkerCompletedEventHandler(finithread);
                     travail.RunWorkerAsync();
-                    travailleur.Add(travail);
                 }
-
+                /*while(fin != nbThread)
+                {
+                    Thread.Sleep(1000);
+                }*/
+                //List<filupdate> files = vérificationFichier(dFile + text[0] + "\\jeu\\normal", sFile, AncienneVersion, newVersion);
+                //vérificationFichier(dFile + text[0] + "\\jeu\\normal", sFile, AncienneVersion, newVersion, newVersion.Count);
+                //WriteFile(files);
             }
             else
             {
-
+                MessageBox.Show("Entrez un chiffre en entier dans thread");
             }
-
-            List<filupdate> file = vérificationFichier(dFile + text[0] + "\\jeu\\normal", sFile, AncienneVersion, newVersion);
-            WriteFile(file);
-            ZipFile.CreateFromDirectory(chemin+"\\patch\\", chemin + "\\update.zip");
         }
+
+        int fin = 0;
+        private void finiThreadVerification(object sender, RunWorkerCompletedEventArgs e)
+        {
+            fin++;
+            if (nbThread == fin)
+            {
+                time = DateTime.Now.Millisecond - time;
+                MessageBox.Show("Temp ecoulé: " + time);
+                ZipFile.CreateFromDirectory(chemin + "\\patch\\", chemin + "\\update.zip");
+                FinTotal();
+            }
+        }
+
         private void calculStart(object sender, DoWorkEventArgs e)
         {
-
+            while (counter < newVersion.Count)
+            {
+                string fichierNew = "";
+                lock (newVersion)
+                {
+                    fichierNew = newVersion[0];
+                    newVersion.RemoveAt(0);
+                    counter++;
+                }
+                vérificationFichier(dFile + text[0] + "\\jeu\\normal", sFile, AncienneVersion, fichierNew, newVersion.Count, counter);
+            }
         }
 
         private void finithreadVerification(object sender, RunWorkerCompletedEventArgs e)
         {           
             MessageBox.Show("Vérification Ok");
-          }
+        }
+
         private int valeurStop=0;
-        private void FinTotal(object sender, RunWorkerCompletedEventArgs e)
+        private void FinTotal(/*object sender, RunWorkerCompletedEventArgs e*/)
         {
            
            if ( !t.IsBusy && !t2.IsBusy)
@@ -209,7 +247,6 @@ namespace laucherQange
 
         private void progressBar(object sender, ProgressChangedEventArgs e)
         {
-            
             progress.Value = e.ProgressPercentage;
         }
         
@@ -365,42 +402,75 @@ namespace laucherQange
         }
         private void fileUpdate(string fichier, string newFichier, string patchFile)
         {
-           try
-				{
-					using (FileStream output = new FileStream(chemin+patchFile, FileMode.OpenOrCreate))
-
+            try
+			{
+				using (FileStream output = new FileStream(chemin+patchFile, FileMode.OpenOrCreate))
                 Console.WriteLine(BinaryPatchUtilityAdrien.Create(File.ReadAllBytes(fichier), File.ReadAllBytes(newFichier), output));
                 System.GC.Collect();
-            }
-				catch (FileNotFoundException ex)
-				{
-					Console.Error.WriteLine("Could not open '{0}'.", ex.FileName);
-				}
-        } 
-        private List<filupdate> vérificationFichier(string route,string routeinit,List<string> version, List<string> newVersion)
+            } 
+			catch (FileNotFoundException ex)
+			{
+				Console.Error.WriteLine("Could not open '{0}'.", ex.FileName);
+			}
+        }
+
+        bool compareFileWithSha(string file1, string file2)
         {
-            Directory.CreateDirectory(chemin + "\\patch\\");
+            return calculShaOfFile(file1) == calculShaOfFile(file2); 
+        }
+
+        string calculShaOfFile(string file)
+        {
+            using (FileStream fs = new FileStream(file, FileMode.Open))
+            using (BufferedStream bs = new BufferedStream(fs))
+            {
+                using (SHA1Managed sha1 = new SHA1Managed())
+                {
+                    byte[] hash = sha1.ComputeHash(bs);
+                    StringBuilder formatted = new StringBuilder(2 * hash.Length);
+                    foreach (byte b in hash)
+                    {
+                        formatted.AppendFormat("{0:X2}", b);
+                    }
+                    return formatted.ToString();
+                }
+            }
+        }
+
+        /****old****
+        private List<filupdate> vérificationFichier(string route, string routeinit, List<string> oldVersion, List<string> newVersion)
+        {
+            List<filupdate> files = new List<filupdate>();
+            try
+            {
+                //Faire avant car sinon va se faire plein de fois
+                Directory.CreateDirectory(chemin + "\\patch\\");
 
             //ici 
-            List<filupdate> files = new List<filupdate>();
             int counter = 0;
-            foreach(string t in newVersion)
+            foreach (string t in newVersion)
             {
                 counter++;
+
+                //A faire ailleurs car newVersion contiendra un seul fichier
                 ecrirelabel((counter * 100) / newVersion.Count, t);
-                t2.ReportProgress((int)(counter * 100) / newVersion.Count);
-                int valuer = version.IndexOf(t);
-                string laroute ="";
-                 if(valuer != -1)laroute   = version[valuer];
-                filupdate tempo=  new filupdate();
-                
-                if ( valuer != -1 && System.IO.File.Exists(route + laroute))
+
+                //t2.ReportProgress((int)(counter * 100) / newVersion.Count);
+                int valuer = oldVersion.IndexOf(t);
+                string laroute = "";
+                if (valuer != -1) laroute = oldVersion[valuer];
+                filupdate tempo = new filupdate();
+
+                if (valuer != -1 && System.IO.File.Exists(route + laroute))
                 {
-                    
+
                     tempo.Fichier = t;
-                    tempo.Updateur = "/patch/"+counter + ".patch";
+                    tempo.Updateur = "/patch/" + counter + ".patch";
                     //   tempo.JupdateList =   BinaryDiff(route + laroute, routeinit + t);
-                    fileUpdate(route + laroute, routeinit + t, tempo.Updateur);
+                    if (!compareFileWithSha(route + laroute, routeinit + t))
+                    {
+                        fileUpdate(route + laroute, routeinit + t, tempo.Updateur);
+                    }
                     // ici faire calculer les fichier avec le nouveau système et retourner la liste des fichier à modifiers 
 
                     tempo.Type = 1;
@@ -413,8 +483,58 @@ namespace laucherQange
                 files.Add(tempo);
 
             }
+            }
+            catch (Exception ex)
+            {
 
-            return files ;
+                MessageBox.Show(ex.Message, "Error");
+                return null;
+            }
+            return files;
+        }
+       // fin old****/
+
+        private int counter = 0;
+        private void vérificationFichier(string route,string routeinit,List<string> oldVersion, string newVersion, int totalFichier, int counterP)
+        {
+            //Faire avant car sinon va se faire plein de fois
+            List<filupdate> file = new List<filupdate>();
+
+            //A faire ailleurs car newVersion contiendra un seul fichier
+            ecrirelabel((counterP * 100) / totalFichier, newVersion);
+
+            //t2.ReportProgress((int)(counter * 100) / newVersion.Count);
+            int valuer = oldVersion.IndexOf(newVersion);
+            string laroute ="";
+            if(valuer != -1)laroute = oldVersion[valuer];
+            filupdate tempo=  new filupdate();
+            bool needWrite = true;
+            if ( valuer != -1 && System.IO.File.Exists(route + laroute))
+            {
+                tempo.Fichier = newVersion;
+                tempo.Updateur = "/patch/"+(counterP + 1)+".patch";
+                //   tempo.JupdateList =   BinaryDiff(route + laroute, routeinit + t);
+                if (!compareFileWithSha(route + laroute, routeinit + newVersion))
+                {
+                    fileUpdate(route + laroute, routeinit + newVersion, tempo.Updateur);
+                }else
+                {
+                    needWrite = false;
+                }
+                // ici faire calculer les fichier avec le nouveau système et retourner la liste des fichier à modifiers 
+
+                tempo.Type = 1;
+            }
+            else
+            {
+                tempo.Fichier = newVersion;
+                tempo.Type = 0;
+            }
+            if (needWrite)
+            {
+                file.Add(tempo);
+                WriteFile(file);
+            }
         }
 
 
@@ -495,7 +615,14 @@ namespace laucherQange
             return listUpdate;
         }
 
-
+        private void tSource_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
 
         }
+
+        private void tType_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+
+        }
+    }
 }

@@ -47,26 +47,26 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DifferenceEngine.dll" size="20480">
-      <assemblyIdentity name="DifferenceEngine" version="1.0.6326.22155" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ICSharpCode.SharpZipLib.dll" size="200704">
+      <assemblyIdentity name="ICSharpCode.SharpZipLib" version="0.86.0.518" publicKeyToken="1B03E6ACF1164F73" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>PrIVkNI7CTejSPlQHaVu+Is4iXV1Pd9h1RwEN+inbkg=</dsig:DigestValue>
+        <dsig:DigestValue>QLPVkPlRkfPjPl0A5TT6QPgj2bG7Kpr+BfE5xOCjr40=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="laucherQange.exe" size="26624">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="laucherQange.exe" size="31232">
       <assemblyIdentity name="laucherQange" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>MhhqlfuH+qF0bBgHpJ9jQGHmTiZmz2sL4a/2byconiI=</dsig:DigestValue>
+        <dsig:DigestValue>3eSThFpZeThSO1Xa0jzK/dHB53awjfTT1AW80CGKoTg=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -82,7 +82,7 @@
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="laucherQange.exe.config" size="585" />
+  <file name="laucherQange.exe.config" size="581" />
   <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
     <application>
       <!-- Liste des versions de Windows pour lesquelles cette application a été testée, et sur

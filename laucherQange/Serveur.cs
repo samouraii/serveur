@@ -25,6 +25,7 @@ namespace laucherQange
 
 
         }
+
         public Boolean run { get; set; }
 
         private void message(string message)
@@ -32,29 +33,28 @@ namespace laucherQange
 
             info.Dispatcher.Invoke(() => { info.AppendText(message); });
         }
-
-        
-       private  TcpClient clientSocket;
+        private IAsyncResult asyncR;
+        private TcpClient clientSocket;
         int counter;
         Thread ctThread;
         private Thread ctNettoyage;
         private List<Thread> tableau;
+
         public void start()
         {
             run = true;
-
-
+            
             // clientSocket = default(TcpClient);               
-
-
+            
             ServeurSocket.Start();
-
-
             counter = 0;
+
             this.message(">> Serveur Start");
             tableau = new List<Thread>();
+
             ctThread = new Thread(startServ);
             ctThread.Start();
+            
             ctNettoyage = new Thread(clearThread);
             ctNettoyage.Start();
 
@@ -82,6 +82,13 @@ namespace laucherQange
             }
 
         }
+
+        public void stopThreadTcp()
+        {
+            run = false;
+            ServeurSocket.Stop();
+        }
+
         private void startServ()
         {
             while (run)
@@ -89,19 +96,16 @@ namespace laucherQange
                 counter++;
 
                 clientSocket = ServeurSocket.AcceptTcpClient();
-                 message("\n>> Client connected N " + counter.ToString());
+                message("\n>> Client connected N " + counter.ToString());
                 //info.AppendText(">> client connected");
                 //handleClinet client = new handleClinet();
                 //client.startClient(info, clientSocket, counter.ToString());
                 Thread temp = new Thread(communication);
                 temp.Start();
                 tableau.Add(temp);
-               // communication();
-           
-
+                //communication();
             }
             clientSocket.Close();
-            ServeurSocket.Stop();
             message(">> exit");
 
         }
@@ -172,34 +176,29 @@ namespace laucherQange
         {
             try {
                 run = false;
-                clientSocket.GetStream().Close();
-                clientSocket.Close();
-
-                foreach(Thread tpt in tableau)
+                if(tableau!=null)foreach(Thread tpt in tableau)
                 {
-                    while (!tpt.IsAlive) ;
-                    Thread.Sleep(1);
-
+                    /*while (!tpt.IsAlive) ;
+                    Thread.Sleep(1);*/
                     tpt.Join();
-                    
                 }
-
-                
-            //   ServeurSocket.Stop();
-                while (!ctThread.IsAlive) ;
+                if(ServeurSocket!=null)ServeurSocket.Stop();
+                //ServeurSocket.Stop();
+                /*while (!ctThread.IsAlive) ;
                 Thread.Sleep(1);
-              
-               ctThread.Join();
-                while (! ctNettoyage.IsAlive) ;
-                Thread.Sleep(1);
+                ctThread.Abort();
+                ctNettoyage.Abort();*/
+                /* ctThread.Join();
+                 while (! ctNettoyage.IsAlive) ;
+                 Thread.Sleep(1);
 
-                ctNettoyage.Join();
+                 ctNettoyage.Join();*/
                 // ctThread.Abort();
 
             }
             catch (Exception e)
             {
-
+                System.Windows.MessageBox.Show(e.Message, e.Message);
             }
             message("exit");
         }

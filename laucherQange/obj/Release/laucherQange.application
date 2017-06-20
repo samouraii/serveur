@@ -4,10 +4,10 @@
   <description asmv2:publisher="laucherQange" asmv2:product="laucherQange" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <deployment install="true" />
   <compatibleFrameworks xmlns="urn:schemas-microsoft-com:clickonce.v2">
-    <framework targetVersion="4.5.2" profile="Full" supportedRuntime="4.0.30319" />
+    <framework targetVersion="4.6.1" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="laucherQange.exe.manifest" size="6058">
+    <dependentAssembly dependencyType="install" codebase="laucherQange.exe.manifest" size="6103">
       <assemblyIdentity name="laucherQange.exe" version="1.0.0.2" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
     </dependentAssembly>
   </dependency>

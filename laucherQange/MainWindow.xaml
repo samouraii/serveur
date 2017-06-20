@@ -5,25 +5,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:laucherQange"
         mc:Ignorable="d"
-        Title="MainWindow" Height="369" Width="929.375" Closing="Window_Closing">
+        Title="MainWindow" Height="436.904" Width="929.375" Closing="Window_Closing">
     <Grid Margin="0,0,24,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="360*"/>
             <ColumnDefinition Width="431*"/>
         </Grid.ColumnDefinitions>
-        <Button x:Name="button" Content="Nouvelle Version" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.5,0.5" Margin="103,254,0,0" Click="button_Click" Height="20">
+        <Button x:Name="button" Content="Nouvelle Version" HorizontalAlignment="Left" VerticalAlignment="Top" Width="121" RenderTransformOrigin="0.5,0.5" Margin="178,306,0,0" Click="button_Click" Height="33">
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
-                    <SkewTransform AngleX="4.062"/>
-                    <RotateTransform/>
-                    <TranslateTransform X="0.71"/>
+                    <SkewTransform AngleX="-0.293" AngleY="0.159"/>
+                    <RotateTransform Angle="-0.148"/>
+                    <TranslateTransform X="1.978" Y="0.168"/>
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
         <Button x:Name="button1" Content="find" HorizontalAlignment="Left" Margin="346,59,0,0" VerticalAlignment="Top" Width="52" Click="button1_Click" Height="20"/>
-        <TextBox x:Name="tSource" HorizontalAlignment="Left" Height="23" Margin="10,60,0,0" TextWrapping="Wrap" Text="D:\testInit" VerticalAlignment="Top" Width="336"/>
-        <TextBox x:Name="tDest" HorizontalAlignment="Left" Height="23" Margin="10,117,0,0" TextWrapping="Wrap" Text="D:\test" VerticalAlignment="Top" Width="336"/>
+        <TextBox x:Name="tSource" HorizontalAlignment="Left" Height="23" Margin="10,60,0,0" TextWrapping="Wrap" Text="D:\TestLauncher\JeuNew\JeuCompile" VerticalAlignment="Top" Width="336" TextChanged="tSource_TextChanged"/>
+        <TextBox x:Name="tDest" HorizontalAlignment="Left" Height="23" Margin="10,117,0,0" TextWrapping="Wrap" Text="D:\TestLauncher\FTP" VerticalAlignment="Top" Width="336"/>
         <Button x:Name="button1_Copy" Content="find" HorizontalAlignment="Left" Margin="346,117,0,0" VerticalAlignment="Top" Width="52" Click="button2_Click" Height="20"/>
         <RichTextBox x:Name="servInfo" Grid.Column="1" HorizontalAlignment="Left" Height="290" VerticalAlignment="Top" Width="489" Margin="25,0,-25,0">
             <FlowDocument>
@@ -35,18 +35,20 @@
         <Button x:Name="stop" Content="stop" Grid.Column="1" HorizontalAlignment="Left" Margin="191,308,0,0" VerticalAlignment="Top" Width="75" Click="button3_Click" IsEnabled="False"/>
         <Label x:Name="label" Content="nouvelle version" HorizontalAlignment="Left" Margin="0,29,0,0" VerticalAlignment="Top" Width="93"/>
         <Label x:Name="label1" Content="Dossier FTP" HorizontalAlignment="Left" Margin="10,88,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="tType" HorizontalAlignment="Left" Margin="180,176,0,0" VerticalAlignment="Top" Width="166">
+        <ComboBox x:Name="tType" HorizontalAlignment="Left" Margin="180,176,0,0" VerticalAlignment="Top" Width="166" SelectionChanged="tType_SelectionChanged">
             <ComboBoxItem Content="Jeu" HorizontalAlignment="Left" Width="164"/>
             <ComboBoxItem Content="LauncherJeu" HorizontalAlignment="Left" Width="164"/>
             <ComboBoxItem Content="LauncherLauncher" HorizontalAlignment="Left" Width="164"/>
 
         </ComboBox>
         <Label x:Name="label2" Content="Type de version" HorizontalAlignment="Left" Margin="10,176,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="tVesrion" HorizontalAlignment="Left" Height="23" Margin="226,228,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <Label x:Name="label3" Content="Version:" HorizontalAlignment="Left" Margin="43,233,0,0" VerticalAlignment="Top" Width="60"/>
-        <ProgressBar x:Name="progress" HorizontalAlignment="Left" Height="18" Margin="56,308,0,0" VerticalAlignment="Top" Width="290"/>
-        <Label x:Name="LabelPourcentage" Content="0" HorizontalAlignment="Left" Margin="180,302,0,0" VerticalAlignment="Top" Height="26" Width="70"/>
-        <Label x:Name="labelFichier" Content="Fichier" HorizontalAlignment="Left" Margin="0,284,0,0" VerticalAlignment="Top" Width="408"/>
+        <TextBox x:Name="tVesrion" HorizontalAlignment="Left" Height="23" Margin="181,228,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <Label x:Name="label3" Content="Version:" HorizontalAlignment="Left" Margin="43,225,0,0" VerticalAlignment="Top" Width="60"/>
+        <ProgressBar x:Name="progress" HorizontalAlignment="Left" Height="18" Margin="56,369,0,0" VerticalAlignment="Top" Width="290"/>
+        <Label x:Name="LabelPourcentage" Content="0" HorizontalAlignment="Left" Margin="190,364,0,0" VerticalAlignment="Top" Height="26" Width="70"/>
+        <Label x:Name="labelFichier" Content="Fichier" HorizontalAlignment="Left" Margin="0,339,0,0" VerticalAlignment="Top" Width="408"/>
+        <TextBox x:Name="tThread" HorizontalAlignment="Left" Height="23" Margin="181,268,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Text="12"/>
+        <Label x:Name="label3_Copy" Content="Thread:" HorizontalAlignment="Left" Margin="43,265,0,0" VerticalAlignment="Top" Width="60"/>
 
     </Grid>
 </Window>

@@ -532,7 +532,42 @@ namespace laucherQange
                         if (len != 0)
                             I[i - len] = -len;
                         len = v[I[i]] + 1 - i;
-                        Split(I, v, i, len, h);
+                        try
+                        {
+                            Split(I, v, i, len, h);
+                        }
+                        catch (Exception e)
+                        {
+                            try
+                            {
+                                Split(I, v, i, len, h);
+                            }
+                            catch (Exception e1)
+                            {
+                                try
+                                {
+                                    Split(I, v, i, len, h);
+                                }
+                                catch (Exception e2)
+                                {
+                                    try
+                                    {
+                                        Split(I, v, i, len, h);
+                                    }
+                                    catch (Exception e3)
+                                    {
+                                        try
+                                        {
+                                            Split(I, v, i, len, h);
+                                        }
+                                        catch (Exception e4)
+                                        {
+                                            Split(I, v, i, len, h);
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         i += len;
                         len = 0;
                     }
