@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using System.Diagnostics;
 
 namespace laucherQange
 {
@@ -22,7 +23,10 @@ namespace laucherQange
        // private DiffEngineLevel _level;
         string tdestT;
         string tTypeT;
+        private object listLock = new object();
         string tVersionT;
+        private int finishUpdate = 0;
+        private int finishUpdateMax = 1;
         public MainWindow()
         {
             InitializeComponent();
@@ -108,13 +112,15 @@ namespace laucherQange
                 tType.Focus();
                 return;
             }
-
+            finishUpdateMax = 0;
+            finishUpdate = 0;
             tdestT = tDest.Text;
             tTypeT = tType.Text;
             tVersionT = tVesrion.Text;
 
           
             button.IsEnabled = false;
+            tType.IsEnabled = false;
             text = dbConnect.selectLastVersion(tType.Text);
             chemin = dFile + "\\" + tType.Text + "\\" + tVesrion.Text;
             if (text[0] != "" && text[0]!= null && text[0] != "-1")
@@ -126,23 +132,21 @@ namespace laucherQange
                 t2.WorkerReportsProgress = true;
                 t2.ProgressChanged += new ProgressChangedEventHandler(progressBar);
                 t2.RunWorkerAsync();
+                finishUpdateMax++;
             }
             else
             {
-                //copier fichier dans le répertoire
+               //copier fichier dans le répertoire
                DirectoryInfo tutu = Directory.CreateDirectory(dFile + "\\"+tType.Text+"\\"+tVesrion.Text);
-               
-
-                //Changer pour copier directory
-
+               //Changer pour copier directory
             }
 
-            /*Directory.CreateDirectory(dFile + "\\" + tType.Text + "\\" + tVesrion.Text + "\\jeu\\zip");
+            finishUpdateMax++;
+            Directory.CreateDirectory(dFile + "\\" + tType.Text + "\\" + tVesrion.Text + "\\jeu\\zip");
             t = new BackgroundWorker();
             t.DoWork += new DoWorkEventHandler(thread);
             t.RunWorkerCompleted += new RunWorkerCompletedEventHandler(finithread);
-            t.RunWorkerCompleted += new RunWorkerCompletedEventHandler(FinTotal);
-            t.RunWorkerAsync();*/
+            t.RunWorkerAsync();
         }
 
         private void thread(object sender, DoWorkEventArgs e)
@@ -160,14 +164,19 @@ namespace laucherQange
 
         private void finithread(object sender, RunWorkerCompletedEventArgs e)
         {
-            MessageBox.Show("Zip ok");
+            finishUpdate++;
+            if(finishUpdate == finishUpdateMax)
+            {
+                FinTotal();
+            }
         }
 
         //Console.WriteLine(msg);
-        private int nbThread = 8;
+        private int nbThread = 12;
         private List<string> newVersion;
         private List<string> AncienneVersion;
-        int time;
+        private int newVersionCount = 0;
+        //int time;
         private void threadVerification(object sender, DoWorkEventArgs e)
         {//ici la modification
             bool parsed = true;
@@ -176,15 +185,30 @@ namespace laucherQange
                 fin = 0;
                 AncienneVersion = this.nbfichier(dFile + text[0] + "\\jeu\\normal",  new List<string>());
                 newVersion = this.nbfichier(sFile, new List<string>());
+                files = new List<filupdate>();
+                
+                //On supprime les fichiers qui ne sont pas présent dans la nouvelle version
+                foreach (string oldVersion in AncienneVersion)
+                {
+                    if (!newVersion.Contains(oldVersion))
+                    {
+                        filupdate tempo = new filupdate();
+                        tempo.Fichier = oldVersion;
+                        tempo.Type = 2;
+                        files.Add(tempo);
+                    }
+                }
+
                 counter = 0;
-                time = DateTime.Now.Millisecond;
+                newVersionCount = newVersion.Count;
+                //time = DateTime.Now.Millisecond;
                 Directory.CreateDirectory(chemin + "\\patch\\");
                 List<BackgroundWorker> travailleur = new List<BackgroundWorker>();
                 for (int i = 0; i < nbThread; i++)
                 {
                     BackgroundWorker travail = new BackgroundWorker();
-                    travail.DoWork += new DoWorkEventHandler(calculStart);
-                    travail.RunWorkerCompleted += new RunWorkerCompletedEventHandler(finithread);
+                    travail.DoWork += new DoWorkEventHandler(calculStart); 
+                    travail.RunWorkerCompleted += new RunWorkerCompletedEventHandler(finiThreadVerification);
                     travail.RunWorkerAsync();
                 }
                 /*while(fin != nbThread)
@@ -207,31 +231,31 @@ namespace laucherQange
             fin++;
             if (nbThread == fin)
             {
-                time = DateTime.Now.Millisecond - time;
-                MessageBox.Show("Temp ecoulé: " + time);
+                WriteFile(files);
                 ZipFile.CreateFromDirectory(chemin + "\\patch\\", chemin + "\\update.zip");
-                FinTotal();
+                MessageBox.Show("compteur: "+compteur + " // newVersionCount: " + newVersionCount + " // counter: " + counter, "compteur: " + compteur + " // newVersionCount: " + newVersionCount + " // counter: " + counter);
+                finishUpdate++;
+                if (finishUpdate == finishUpdateMax)
+                {
+                    FinTotal();
+                }
             }
         }
 
         private void calculStart(object sender, DoWorkEventArgs e)
         {
-            while (counter < newVersion.Count)
+            while (counter < newVersionCount)
             {
                 string fichierNew = "";
-                lock (newVersion)
+                lock (listLock)
                 {
                     fichierNew = newVersion[0];
                     newVersion.RemoveAt(0);
                     counter++;
                 }
-                vérificationFichier(dFile + text[0] + "\\jeu\\normal", sFile, AncienneVersion, fichierNew, newVersion.Count, counter);
+                vérificationFichier(dFile + text[0] + "\\jeu\\normal", sFile, AncienneVersion, fichierNew, newVersionCount, counter);
+                
             }
-        }
-
-        private void finithreadVerification(object sender, RunWorkerCompletedEventArgs e)
-        {           
-            MessageBox.Show("Vérification Ok");
         }
 
         private int valeurStop=0;
@@ -240,8 +264,9 @@ namespace laucherQange
            
            if ( !t.IsBusy && !t2.IsBusy)
             {
-                 int i = dbConnect.insertVersion(tVesrion.Text, tType.Text, "pas encore fait", "\\" + tType.Text + "\\" + tVesrion.Text);
-                this.button.IsEnabled = true;
+                int i = dbConnect.insertVersion(tVesrion.Text, tType.Text, "pas encore fait", "\\" + tType.Text + "\\" + tVesrion.Text);
+                tType.IsEnabled = true;
+                //this.button.IsEnabled = true;
             }
         }
 
@@ -265,9 +290,9 @@ namespace laucherQange
                 // serialize JSON directly to a file
                 using(StreamWriter file = File.CreateText(chemin+ "\\patch\\update" + tTypeT + ".json"))
                 {
-                                       JsonSerializer serializer = new JsonSerializer();
-                                        serializer.Serialize(file, mtable);
-                                    }
+                    JsonSerializer serializer = new JsonSerializer();
+                    serializer.Serialize(file, mtable);
+                }
                 //dbConnect.initialise();
                // dbConnect.insertVersion(tVesrion.Text, tType.Text, "pasEncoreFait", "\\" + tType.Text + "\\" + tVesrion.Text);
         }
@@ -387,6 +412,7 @@ namespace laucherQange
             }
             return i;
         }
+
         private void ecrirelabel(double pourcentage, string label)
         {
            labelFichier.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
@@ -397,21 +423,35 @@ namespace laucherQange
             {
                 LabelPourcentage.Content = pourcentage + " %";
             }));
-
-           
         }
+
         private void fileUpdate(string fichier, string newFichier, string patchFile)
         {
             try
-			{
-				using (FileStream output = new FileStream(chemin+patchFile, FileMode.OpenOrCreate))
-                Console.WriteLine(BinaryPatchUtilityAdrien.Create(File.ReadAllBytes(fichier), File.ReadAllBytes(newFichier), output));
-                System.GC.Collect();
-            } 
-			catch (FileNotFoundException ex)
-			{
-				Console.Error.WriteLine("Could not open '{0}'.", ex.FileName);
-			}
+            {
+                /*using (FileStream output = new FileStream(chemin + patchFile, FileMode.OpenOrCreate))
+                BinaryPatchUtility.Create(File.ReadAllBytes(fichier), File.ReadAllBytes(newFichier), output);
+                System.GC.Collect();*/
+                var processInfo = new ProcessStartInfo("java.exe", "-Xmx20g -jar jbsdiff.jar diff "+ fichier + " " +newFichier+ " " + chemin + patchFile)
+                {
+                    CreateNoWindow = true,
+                    UseShellExecute = false
+                };
+                Process proc;
+
+                if ((proc = Process.Start(processInfo)) == null)
+                {
+                    throw new InvalidOperationException("??");
+                }
+
+                proc.WaitForExit();
+                int exitCode = proc.ExitCode;
+                proc.Close();
+            }
+            catch (Exception ex1)
+            {
+                MessageBox.Show(ex1.ToString() + ex1.Message, ex1.ToString() + ex1.Message);
+            }
         }
 
         bool compareFileWithSha(string file1, string file2)
@@ -494,12 +534,12 @@ namespace laucherQange
         }
        // fin old****/
 
+        private int compteur = 0;
         private int counter = 0;
+        private List<filupdate> files;
         private void vérificationFichier(string route,string routeinit,List<string> oldVersion, string newVersion, int totalFichier, int counterP)
         {
-            //Faire avant car sinon va se faire plein de fois
-            List<filupdate> file = new List<filupdate>();
-
+            compteur++;
             //A faire ailleurs car newVersion contiendra un seul fichier
             ecrirelabel((counterP * 100) / totalFichier, newVersion);
 
@@ -511,11 +551,11 @@ namespace laucherQange
             bool needWrite = true;
             if ( valuer != -1 && System.IO.File.Exists(route + laroute))
             {
-                tempo.Fichier = newVersion;
-                tempo.Updateur = "/patch/"+(counterP + 1)+".patch";
                 //   tempo.JupdateList =   BinaryDiff(route + laroute, routeinit + t);
                 if (!compareFileWithSha(route + laroute, routeinit + newVersion))
                 {
+                    tempo.Fichier = newVersion;
+                    tempo.Updateur = "/patch/" + (counterP + 1) + ".patch";
                     fileUpdate(route + laroute, routeinit + newVersion, tempo.Updateur);
                 }else
                 {
@@ -532,8 +572,7 @@ namespace laucherQange
             }
             if (needWrite)
             {
-                file.Add(tempo);
-                WriteFile(file);
+                files.Add(tempo);
             }
         }
 
@@ -545,7 +584,6 @@ namespace laucherQange
             stop.IsEnabled = true;
             button2.IsEnabled = false;
             s.start();
-
         }
 
         private void button3_Click(object sender, RoutedEventArgs e)
@@ -560,7 +598,6 @@ namespace laucherQange
         {
             s.run = false;
             s.stop();
-           
         }
 
 
@@ -620,9 +657,48 @@ namespace laucherQange
 
         }
 
+        private string nextVersion(string version)
+        {
+            string[] versionSp = version.Split('.');
+            for(int i = versionSp.Length-1; i>=0; i--)
+            {
+                if (versionSp[i] == "9")
+                {
+                    versionSp[i] = "0";
+                }else
+                {
+                    versionSp[i] = (Int32.Parse(versionSp[i])+1)+"";
+                    break;
+                }
+            }
+            string newVersion = "";
+            for (int i = 0; i < versionSp.Length; i++)
+            {
+                if (i != versionSp.Length - 1) {
+                    newVersion += versionSp[i] + ".";
+                }
+                else
+                {
+                    newVersion += versionSp[i];
+                }
+            }
+            return newVersion;
+        }
+
         private void tType_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-
+            string type = (e.AddedItems[0] as System.Windows.Controls.ComboBoxItem).Content as string;
+            tSource.Text = type == "Jeu" ? "C:\\Users\\iolacorp\\Desktop\\SyncthingsStockage\\JeuCompile" :
+                type == "LauncherJeu" ? "C:\\Users\\iolacorp\\Desktop\\QangaServer\\LauncherClient" :
+                type == "LauncherLauncher" ? "C:\\Users\\iolacorp\\Desktop\\QangaServer\\LauncherLauncher" : "";
+            string[] versions = dbConnect.selectLastVersion(type);
+            string version = "0.0.0.1";
+            if (versions[0] != "" && versions[0] != null && versions[0] != "-1")
+            {
+                version = nextVersion(versions[versions.Length-1]);
+            }
+            tVesrion.Text = version;
+            button.IsEnabled = true;
         }
     }
 }

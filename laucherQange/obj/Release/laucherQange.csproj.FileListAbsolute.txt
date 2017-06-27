@@ -44,3 +44,10 @@ C:\Users\Gaby\Desktop\LauncherServerProject\serveur\laucherQange\obj\Release\lau
 C:\Users\Gaby\Desktop\LauncherServerProject\serveur\laucherQange\obj\Release\laucherQange.TrustInfo.xml
 C:\Users\Gaby\Desktop\LauncherServerProject\serveur\laucherQange\obj\Release\laucherQange.exe.manifest
 C:\Users\Gaby\Desktop\LauncherServerProject\serveur\laucherQange\obj\Release\laucherQange.application
+C:\Users\Gaby\Desktop\LauncherServerProject\serveur\laucherQange\bin\Release\Logos.Utility.dll
+C:\Users\Gaby\Desktop\LauncherServerProject\serveur\laucherQange\bin\Release\nunit.framework.dll
+C:\Users\Gaby\Desktop\LauncherServerProject\serveur\laucherQange\bin\Release\StringSearch.dll
+C:\Users\Gaby\Desktop\LauncherServerProject\serveur\laucherQange\bin\Release\SuffixArray.dll
+C:\Users\Gaby\Desktop\LauncherServerProject\serveur\laucherQange\bin\Release\Logos.Utility.pdb
+C:\Users\Gaby\Desktop\LauncherServerProject\serveur\laucherQange\bin\Release\StringSearch.pdb
+C:\Users\Gaby\Desktop\LauncherServerProject\serveur\laucherQange\bin\Release\SuffixArray.pdb

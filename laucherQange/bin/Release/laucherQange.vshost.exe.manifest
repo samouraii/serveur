@@ -59,14 +59,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="laucherQange.exe" size="41472">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="laucherQange.exe" size="39424">
       <assemblyIdentity name="laucherQange" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>tOFbNKYvAt5KjHgYOsgtpQUgxyR9E7gDEIiOsadzhXk=</dsig:DigestValue>
+        <dsig:DigestValue>isKwOppoR9poy1Gv1EDD3Fsi6LZYcqQR+kyHxs+ClnU=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

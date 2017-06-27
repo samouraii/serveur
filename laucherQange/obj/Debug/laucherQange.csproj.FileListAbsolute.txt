@@ -67,3 +67,10 @@ C:\Users\Gaby\Desktop\LauncherServerProject\serveur\laucherQange\obj\Debug\lauch
 C:\Users\Gaby\Desktop\LauncherServerProject\serveur\laucherQange\obj\Debug\laucherQange.exe
 C:\Users\Gaby\Desktop\LauncherServerProject\serveur\laucherQange\obj\Debug\laucherQange.pdb
 C:\Users\Gaby\Desktop\LauncherServerProject\serveur\laucherQange\obj\Debug\laucherQange.csprojResolveAssemblyReference.cache
+C:\Users\Gaby\Desktop\LauncherServerProject\serveur\laucherQange\bin\Debug\Logos.Utility.dll
+C:\Users\Gaby\Desktop\LauncherServerProject\serveur\laucherQange\bin\Debug\nunit.framework.dll
+C:\Users\Gaby\Desktop\LauncherServerProject\serveur\laucherQange\bin\Debug\StringSearch.dll
+C:\Users\Gaby\Desktop\LauncherServerProject\serveur\laucherQange\bin\Debug\SuffixArray.dll
+C:\Users\Gaby\Desktop\LauncherServerProject\serveur\laucherQange\bin\Debug\Logos.Utility.pdb
+C:\Users\Gaby\Desktop\LauncherServerProject\serveur\laucherQange\bin\Debug\StringSearch.pdb
+C:\Users\Gaby\Desktop\LauncherServerProject\serveur\laucherQange\bin\Debug\SuffixArray.pdb

@@ -49,7 +49,7 @@ namespace laucherQange
             ServeurSocket.Start();
             counter = 0;
 
-            this.message(">> Serveur Start");
+            this.message(">> Serveur Start\n");
             tableau = new List<Thread>();
 
             ctThread = new Thread(startServ);
@@ -94,19 +94,27 @@ namespace laucherQange
             while (run)
             {
                 counter++;
-
-                clientSocket = ServeurSocket.AcceptTcpClient();
-                message("\n>> Client connected N " + counter.ToString());
-                //info.AppendText(">> client connected");
-                //handleClinet client = new handleClinet();
-                //client.startClient(info, clientSocket, counter.ToString());
-                Thread temp = new Thread(communication);
-                temp.Start();
-                tableau.Add(temp);
+                bool exception = false;
+                try
+                {
+                    clientSocket = ServeurSocket.AcceptTcpClient();
+                }catch(Exception e)
+                {
+                    exception = true;
+                }
+                if (!exception)
+                {
+                    message(">> Client connected N " + counter.ToString());
+                    //info.AppendText(">> client connected");
+                    //handleClinet client = new handleClinet();
+                    //client.startClient(info, clientSocket, counter.ToString());
+                    Thread temp = new Thread(communication);
+                    temp.Start();
+                    tableau.Add(temp);
+                }
                 //communication();
             }
-            clientSocket.Close();
-            message(">> exit");
+            if(clientSocket!=null)clientSocket.Close();
 
         }
         private void communication()
@@ -166,9 +174,7 @@ namespace laucherQange
                 message("erreur "+e.Message);
             }
 
-
-
-            
+            message("\n");
 
         }
 
@@ -182,17 +188,17 @@ namespace laucherQange
                     Thread.Sleep(1);*/
                     tpt.Join();
                 }
-                if(ServeurSocket!=null)ServeurSocket.Stop();
+                if (ServeurSocket!=null)ServeurSocket.Stop();
                 //ServeurSocket.Stop();
                 /*while (!ctThread.IsAlive) ;
                 Thread.Sleep(1);
                 ctThread.Abort();
                 ctNettoyage.Abort();*/
                 /* ctThread.Join();
-                 while (! ctNettoyage.IsAlive) ;
-                 Thread.Sleep(1);
+                while (! ctNettoyage.IsAlive) ;
+                Thread.Sleep(1);
 
-                 ctNettoyage.Join();*/
+                ctNettoyage.Join();*/
                 // ctThread.Abort();
 
             }
@@ -200,7 +206,7 @@ namespace laucherQange
             {
                 System.Windows.MessageBox.Show(e.Message, e.Message);
             }
-            message("exit");
+            message(">> Serveur Stop\n");
         }
 
 
